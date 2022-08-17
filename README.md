@@ -32,7 +32,7 @@ Now you can spawn a shell in the container with some extra privileges and mounts
 
 ```
 mkdir -p osbuild-store
-podman run \
+sudo podman run \
   --rm \
   --privileged \
   --cap-add=sys_admin,mknod \
