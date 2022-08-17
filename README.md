@@ -47,6 +47,8 @@ container. This is for osbuild to store artifacts it's working on. We need this 
 setattr/getattr system calls do not work properly on the overlayfs within the container filesystem.
 By having an externally mounted directory, we can workaround that.
 
+The above can also be executed by using the included run.sh script in this project.
+
 You can run osbuild once inside the container. You must specify the store and output directory
 using --store and --output-directory to point to the mounted external directory (/mnt).
 
