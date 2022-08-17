@@ -66,3 +66,7 @@ $ git clone https://gitlab.com/CentOS/automotive/sample-images.git
 $ cd sample-images/osbuild-manifests
 $ make cs9-qemu-minimal-ostree.x86_64.img BUILDDIR=/mnt
 ```
+
+The --store and --output-directory parameters for osbuild are configured by the makefile BUILDDIR
+variable thus it needs to be set when calling make (unless the repo is cloned into the externally
+mounted directory in which case BUILDDIR will by default use it).
