@@ -5,10 +5,10 @@ Dockerfile for osbuild fedora environment
 # About
 
 This project provides a container configuration and set up information on how to run osbuild in a 
-*privileged* podman container. The only purpose of this is to be able to run the latest versions of
+**privileged** podman container. The only purpose of this is to be able to run the latest versions of
 osbuild without installing it on the host system.
 
-*Warning:* This project does not allow you to run osbuild in an unprivileged manner. The osbuild
+**Warning:** This project does not allow you to run osbuild in an unprivileged manner. The osbuild
 project stages require permissions to do things like mount loopback devices or create device nodes
 which cannot be done in a container namespace.
 
