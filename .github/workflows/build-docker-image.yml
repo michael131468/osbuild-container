@@ -37,10 +37,18 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push (podman)
         uses: docker/build-push-action@v3
         with:
           push: true
           tags: michael131468/osbuild-docker:${{ steps.get-osbuild-rpm-version.outputs.container_tag }} , michael131468/osbuild-docker:latest
           file: Containerfile
+          build-args: VERSION=-${{ steps.get-osbuild-rpm-version.outputs.osbuild_version }}
+
+      - name: Build and push (toolbox)
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: michael131468/osbuild-toolbox:${{ steps.get-osbuild-rpm-version.outputs.container_tag }} , michael131468/osbuild-toolbox:latest
+          file: toolbx/Containerfile
           build-args: VERSION=-${{ steps.get-osbuild-rpm-version.outputs.osbuild_version }}
