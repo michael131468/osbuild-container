@@ -25,6 +25,7 @@ jobs:
           LATEST_VERSION=$(dnf repoquery \
             --repofrompath "osbuild,https://download.copr.fedorainfracloud.org/results/%40osbuild/osbuild/fedora-36-x86_64" \
             --repoid=osbuild \
+            --latest-limit 1 \
             --queryformat="%{EPOCH}:%{VERSION}-%{RELEASE}" \
             osbuild.noarch)
           echo "LATEST_VERSION=${LATEST_VERSION}"
