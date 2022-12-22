@@ -18,7 +18,7 @@ machine and to avoid installing the osbuild rpms.
 
 This project also does not enable you to simply build images for a different architecture than the host
 machine (i.e. aarch64 images on an x86_64 host). Although it is possible to use qemu-system-aarch64
-within the container to do so.
+within the container to do so (see bottom of this README).
 
 # Running with Toolbx
 
@@ -100,14 +100,39 @@ I use this project to build AutoSD sample-images with the latest OSBuild version
 them to my host system.
 
 ```
-$ git clone https://gitlab.com/CentOS/automotive/sample-images.git
-$ cd sample-images/osbuild-manifests
-$ make cs9-qemu-minimal-ostree.x86_64.img BUILDDIR=/mnt
+$ sudo toolbox create osbuild-toolbox -i docker.io/michael131468/osbuild-toolbox:latest
+$ sudo toolbox enter osbuild-toolbox
+# dnf install -y git make
+# git clone https://gitlab.com/CentOS/automotive/sample-images.git
+# cd sample-images/osbuild-manifests
+# make cs9-qemu-minimal-ostree.x86_64.img
 ```
 
 The --store and --output-directory parameters for osbuild are configured by the makefile BUILDDIR
 variable thus it needs to be set when calling make (unless the repo is cloned into the externally
 mounted directory in which case BUILDDIR will by default use it).
+
+# Building ARM64 Images with a QEMU VM
+
+The sample-images project comes with support to wrap osbuild in a qemu virtual machine. I've tested this
+and found it possible to do so within the toolbox container. I can fetch a pre-built aarch64 system image
+to use as a base for qemu from the nightly artefacts produced by the AutoSD project.
+
+```
+$ sudo toolbox create osbuild-toolbox -i docker.io/michael131468/osbuild-toolbox:latest
+$ sudo toolbox enter osbuild-toolbox
+# dnf install -y git make qemu-system-aarch64
+# git clone https://gitlab.com/CentOS/automotive/sample-images.git
+# cd sample-images/osbuild-manifests
+# mkdir -p _build
+# cd _build
+# wget --recursive --no-parent --no-directories -A "osbuildvm*" 'https://autosd.sig.centos.org/AutoSD-9/nightly/osbuildvm-images/'
+# cd ..
+# make cs9-qemu-developer-ostree.aarch64.img
+```
+
+This approach is significantly slower than building on the native architecture as the emulation reduces
+performance. One should expect a very slow build process.
 
 [1]: https://containertoolbx.org/
 [2]: https://hub.docker.com/repository/docker/michael131468/osbuild-toolbox
