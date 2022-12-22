@@ -1,30 +1,34 @@
-# osbuild-docker
+# osbuild-container
 
-Dockerfile for osbuild fedora environment
+OSBuild in a container.
 
 # About
 
-This project provides a container configuration and set up information on how to run osbuild in a
-**privileged** podman container. The only purpose of this is to be able to run the latest versions
-of osbuild without installing it on the host system.
+This project provides a container and set up information on how to run OSBuild in a **privileged**
+[toolbox container][1]. 
 
-**Warning:** This project does not allow you to run osbuild in an unprivileged manner. The osbuild
-project stages require permissions to do things like mount loopback devices or create device nodes
-which cannot be done in a container namespace. It also does not allow you to build images for a
-different architecture than the host machine (i.e. aarch64 images on an x86_64 host).
+The OSBuild project stages require permissions to do things like mount loopback devices or create
+device nodes which cannot be done in a standard container namespace. This makes it not possible to
+use OSBuild in a typical unprivileged container wrapped in user namespaces.
 
-I created this container environment as a way to build the AutoSD sample-images on my host machine
-without needing to install osbuild rpms.
+Since OSBuild cannot run in an unprivileged container, the only purpose of this is to be able to run
+the latest versions of osbuild without installing it on the host system. The use case for me is to
+have a disposable environment to build and experiment with the automotive-sig sample-images on my host
+machine and to avoid installing the osbuild rpms.
 
-# How to run using Toolbx
+This project also does not enable you to simply build images for a different architecture than the host
+machine (i.e. aarch64 images on an x86_64 host). Although it is possible to use qemu-system-aarch64
+within the container to do so.
+
+# Running with Toolbx
 
 The [Toolbx project](https://containertoolbx.org/) is a tool for containerised command
 environments.
 
-There are toolbox container images built and pushed to docker hub for this project. They can be
-found [here](https://hub.docker.com/repository/docker/michael131468/osbuild-toolbox).
+There are pre-built toolbox container images built and pushed to docker hub for this project. They
+can be found [here][2].
 
-To use these images as a toolbox environment, root privileges are required. Toolbox needs to
+To use these images as a toolbox environment, root privileges are required. Toolbx needs to
 be spawned with sudo or as root to give the containerised environment access to the needed device
 nodes. You can create the environment with the command below.
 
@@ -42,13 +46,14 @@ After creating the environment, you can then enter the toolbox environment like 
 $ sudo toolbox enter osbuild-toolbox
 ```
 
-Note: There may be an issue that the current working directory won't be mounted directly into the
-toolbx container.
+There is an issue that the current working directory won't be mounted directly into the
+toolbx container. Instead you'll be dropped into the home directory of the root account (typically
+/root).
 
-# How to run using Podman
+# Running with Podman
 
-There are podman container images built and pushed to docker hub for this project. They can be
-found [here](https://hub.docker.com/repository/docker/michael131468/osbuild-docker).
+There are pre-built Podman container images built and pushed to docker hub for this project. They
+can be found [here][3].
 
 Optionally you can build the container image locally like so:
 
@@ -56,7 +61,7 @@ Optionally you can build the container image locally like so:
 sudo podman build -t osbuild:latest .
 ```
 
-Note the sudo, this is because in the end the container must be run as root. (I did experiment
+Note the use of "sudo". This is because in the end the container must be run as root. (I did experiment
 with using fakeroot/fakechroot to mask the mknod calls, but in the end I found I anyways need
 access to /dev/loop-control to run image build operations with osbuild).
 
@@ -91,7 +96,7 @@ $ osbuild --store /mnt/store --output-directory /mnt/output [...]
 
 # Example: Building AutoSD sample-images
 
-I use this project to build AutoSD sample-images with the latest osbuild versions without installing
+I use this project to build AutoSD sample-images with the latest OSBuild versions without installing
 them to my host system.
 
 ```
@@ -103,3 +108,7 @@ $ make cs9-qemu-minimal-ostree.x86_64.img BUILDDIR=/mnt
 The --store and --output-directory parameters for osbuild are configured by the makefile BUILDDIR
 variable thus it needs to be set when calling make (unless the repo is cloned into the externally
 mounted directory in which case BUILDDIR will by default use it).
+
+[1]: https://containertoolbx.org/
+[2]: https://hub.docker.com/repository/docker/michael131468/osbuild-toolbox
+[3]: https://hub.docker.com/repository/docker/michael131468/osbuild-docker
