@@ -29,8 +29,8 @@ jobs:
             --queryformat="%{EPOCH}:%{VERSION}-%{RELEASE}" \
             osbuild.noarch)
           echo "LATEST_VERSION=${LATEST_VERSION}"
-          echo "::set-output name=osbuild_version::${LATEST_VERSION}"
-          echo "::set-output name=container_tag::$(echo ${LATEST_VERSION} | tr : .)"
+          echo "osbuild_version=${LATEST_VERSION}" >> $GITHUB_OUTPUT
+          echo "container_tag=$(echo ${LATEST_VERSION} | tr : .)" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
