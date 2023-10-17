@@ -1,3 +1,5 @@
+[![Build Container Images](https://github.com/michael131468/osbuild-container/actions/workflows/build-docker-image.yml/badge.svg)](https://github.com/michael131468/osbuild-container/actions/workflows/build-docker-image.yml)
+
 # osbuild-container
 
 OSBuild in a container.
